@@ -1,15 +1,12 @@
 import System.IO;
-import Control.Monad;
 
 fuelRequired :: (Integral a) => a -> a
 fuelRequired n = (n `div` 3) - 2        -- Integer devision so no need to round
 
-getAllLines :: IO [String]
-getAllLines = liftM lines $ hGetContents stdin
+parse :: String -> [Int]
+parse = map (read :: (String -> Int)) . lines
 
-getModules :: IO [Int]
-getModules = getAllLines >>= return . map (read :: (String -> Int))
+solve :: [Int] -> Int
+solve = sum . map fuelRequired  
 
-allFuel = (liftM $ fmap fuelRequired) getModules
-
-main = (liftM sum $ allFuel) >>= print
+main = interact $ show . solve . parse

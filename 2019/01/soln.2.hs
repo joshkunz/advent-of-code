@@ -1,5 +1,4 @@
 import System.IO;
-import Control.Monad;
 
 fuelRequiredRec :: (Integral a) => a -> a -> a
 -- Integer devision so no need to round
@@ -12,12 +11,10 @@ fuelRequiredRec rem total =
 fuelRequired :: (Integral a) => a -> a
 fuelRequired n = fuelRequiredRec n 0
 
-getAllLines :: IO [String]
-getAllLines = liftM lines $ hGetContents stdin
+parse :: String -> [Int]
+parse = map (read :: (String -> Int)) . lines
 
-getModules :: IO [Int]
-getModules = getAllLines >>= return . map (read :: (String -> Int))
+solve :: [Int] -> Int
+solve = sum . map fuelRequired  
 
-allFuel = (liftM $ fmap fuelRequired) getModules
-
-main = (liftM sum $ allFuel) >>= print
+main = interact $ show . solve . parse
