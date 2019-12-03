@@ -1,3 +1,4 @@
+module Main where
 import System.IO;
 
 fuelRequiredRec :: (Integral a) => a -> a -> a
