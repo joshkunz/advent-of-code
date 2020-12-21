@@ -2,3 +2,4 @@
 *.o
 **/.ghc.environment*
 **/dist-newstyle/*
+**/target/*
