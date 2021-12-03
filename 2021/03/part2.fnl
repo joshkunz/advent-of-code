@@ -1,9 +1,5 @@
 (local fun (require :fun))
 (local fennel (require :fennel))
-; Figure out how many digits in the input
-; Calculate the most/least common bit of each digit
-; Convert bit-representations to decimal
-; multiply
 
 (lambda oxygen-generator [{:0 zero :1 one}]
  (if (> zero one) :0 :1))
@@ -31,19 +27,6 @@
   (each [_ v (ipairs in)]
    (freqs:update v))
   freqs))
-
-(fn nil? [v] (= v nil))
-
-(lambda min [...]
- (accumulate [least nil
-              _ v (ipairs [...])]
-  (if
-   (nil? least) v
-   (< v least)  v 
-                least)))
-
-(lambda shallow-copy [in]
- [(table.unpack in)])
 
 (lambda rating [in rule]
  (let [digits (length (. in 1))]

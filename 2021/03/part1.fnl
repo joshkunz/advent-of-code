@@ -1,9 +1,5 @@
 (local fun (require :fun))
 (local fennel (require :fennel))
-; Figure out how many digits in the input
-; Calculate the most/least common bit of each digit
-; Convert bit-representations to decimal
-; multiply
 
 (lambda gamma [{:0 zero :1 one}]
  (if (< zero one) :1 :0))
