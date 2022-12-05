@@ -10,3 +10,5 @@
 | 3   | 2    | [Python](day3/part2.py) |
 | 4   | 1    | [Rust](day4/src/main.rs) |
 | 4   | 2    | [Rust](day4/src/main.rs) |
+| 5   | 1    | [Rust](day5/src/main.rs) |
+| 5   | 2    | [Rust](day5/src/main.rs) |
