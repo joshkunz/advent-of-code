@@ -12,3 +12,5 @@
 | 4   | 2    | [Rust](day4/src/main.rs) |
 | 5   | 1    | [Rust](day5/src/main.rs) |
 | 5   | 2    | [Rust](day5/src/main.rs) |
+| 6   | 1    | [Rust](day6/src/main.rs) |
+| 6   | 2    | [Rust](day6/src/main.rs) |
