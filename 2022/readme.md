@@ -16,3 +16,5 @@
 | 6   | 2    | [Rust](day6/src/main.rs) |
 | 7   | 1    | [Rust](day7/src/main.rs) |
 | 7   | 2    | [Rust](day7/src/main.rs) |
+| 8   | 1    | [Rust](day8/src/main.rs) |
+| 8   | 2    | [Rust](day8/src/main.rs) |
