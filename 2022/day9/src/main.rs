@@ -10,7 +10,8 @@ fn main() {
     io::stdin().read_to_string(&mut input).unwrap();
 
     let puzzle = parse(&input).expect("failed parse");
-    println!("Part1: {}", tail_positions(&puzzle).len());
+    println!("Part1: {}", tail_positions(&puzzle, 1).len());
+    println!("Part2: {}", tail_positions(&puzzle, 9).len());
 }
 
 #[derive(Debug,PartialEq)]
@@ -64,95 +65,115 @@ fn parse(input: &str) -> Result<Vec<Inst>> {
 #[derive(Debug,PartialEq,Eq,Hash,Clone,Copy)]
 struct Position{x: i64, y: i64}
 
-fn tail_positions(insts: &Vec<Inst>) -> HashSet<Position> {
+fn tail_positions(insts: &Vec<Inst>, ntails: usize) -> HashSet<Position> {
     let mut pos: HashSet<Position> = HashSet::new();
 
-    let mut head = Position{x: 0, y: 0};
-    let mut tail = Position{x: 0, y: 0};
+    let mut tails = vec![Position{x: 0, y: 0}; ntails+1];
 
     // Count the start position.
-    pos.insert(tail);
+    pos.insert(tails[ntails]);
 
     for Inst{dir, amount} in insts {
         for _ in 0..*amount {
+            // use tails[0] as the head
             match dir {
-                Dir::Left => head.x -= 1,
-                Dir::Right => head.x += 1,
-                Dir::Up => head.y += 1,
-                Dir::Down => head.y -= 1,
+                Dir::Left => tails[0].x -= 1,
+                Dir::Right => tails[0].x += 1,
+                Dir::Up => tails[0].y += 1,
+                Dir::Down => tails[0].y -= 1,
             }
 
-            let dx = head.x - tail.x;
-            let dy = head.y - tail.y;
+            for n in 1..=ntails {
+                let head = &tails[n-1];
+                let mut tail = tails[n];
+                let dx = head.x - tail.x;
+                let dy = head.y - tail.y;
 
-            match (dx, dy) {
-                //  ..h..
-                //  .....
-                //  h.t.h
-                //  .....
-                //  ..h..
-                (-2, 0) => tail.x -= 1,
-                (2, 0) => tail.x += 1,
-                (0, -2) => tail.y -= 1,
-                (0, 2) => tail.y += 1,
-                // .h.h.
-                // .....
-                // ..t..
-                // .....
-                // .h.h.
-                (1, 2) => {
-                    tail.x += 1;
-                    tail.y += 1;
-                },
-                (1, -2) => {
-                    tail.x += 1;
-                    tail.y -= 1;
-                },
-                (-1, 2) => {
-                    tail.x -= 1;
-                    tail.y += 1;
-                },
-                (-1, -2) => {
-                    tail.x -= 1;
-                    tail.y -= 1;
-                },
-                // .....
-                // h...h
-                // ..t..
-                // h...h
-                // .....
-                (2, 1) => {
-                    tail.x += 1;
-                    tail.y += 1;
-                },
-                (2, -1) => {
-                    tail.x += 1;
-                    tail.y -= 1;
-                },
-                (-2, 1) => {
-                    tail.x -= 1;
-                    tail.y += 1;
-                },
-                (-2, -1) => {
-                    tail.x -= 1;
-                    tail.y -= 1;
-                },
-                // Assume we're still adjacent
-                _ => (),
+                match (dx, dy) {
+                    //  ..h..
+                    //  .....
+                    //  h.t.h
+                    //  .....
+                    //  ..h..
+                    (-2, 0) => tail.x -= 1,
+                    (2, 0) => tail.x += 1,
+                    (0, -2) => tail.y -= 1,
+                    (0, 2) => tail.y += 1,
+                    // .h.h.
+                    // .....
+                    // ..t..
+                    // .....
+                    // .h.h.
+                    (1, 2) => {
+                        tail.x += 1;
+                        tail.y += 1;
+                    },
+                    (1, -2) => {
+                        tail.x += 1;
+                        tail.y -= 1;
+                    },
+                    (-1, 2) => {
+                        tail.x -= 1;
+                        tail.y += 1;
+                    },
+                    (-1, -2) => {
+                        tail.x -= 1;
+                        tail.y -= 1;
+                    },
+                    // .....
+                    // h...h
+                    // ..t..
+                    // h...h
+                    // .....
+                    (2, 1) => {
+                        tail.x += 1;
+                        tail.y += 1;
+                    },
+                    (2, -1) => {
+                        tail.x += 1;
+                        tail.y -= 1;
+                    },
+                    (-2, 1) => {
+                        tail.x -= 1;
+                        tail.y += 1;
+                    },
+                    (-2, -1) => {
+                        tail.x -= 1;
+                        tail.y -= 1;
+                    },
+                    (2, 2) => {
+                        tail.x += 1;
+                        tail.y += 1;
+                    },
+                    (2, -2) => {
+                        tail.x += 1;
+                        tail.y -= 1;
+                    },
+                    (-2, 2) => {
+                        tail.x -= 1;
+                        tail.y += 1;
+                    },
+                    (-2, -2) => {
+                        tail.x -= 1;
+                        tail.y -= 1;
+                    },
+                    // Assume we're still adjacent
+                    _ => (),
+                }
+                /*
+                println!("{}] head {:?}", n, head);
+                println!("{}] dx={}, dy={}", n, dx, dy);
+                println!("{}] tail {:?}", n, tail);
+                */
+                tails[n] = tail;
+
             }
 
-            /*
-            println!("head {:#?}", head);
-            println!("dx={}, dy={}", dx, dy);
-            println!("tail {:#?}", tail);
-            */
 
-            if pos.insert(tail) {
-                //println!("touched {:#?}", tail);
+            if pos.insert(tails[ntails]) {
+                //println!("touched {:#?}", tails[ntails]);
             }
-            /*
-            println!("----");
-            */
+            //println!("----");
         }
     }
 
