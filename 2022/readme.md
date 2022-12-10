@@ -20,3 +20,5 @@
 | 8   | 2    | [Rust](day8/src/main.rs) |
 | 9   | 1    | [Rust](day9/src/main.rs) |
 | 9   | 2    | [Rust](day9/src/main.rs) |
+| 10  | 1    | [Rust](day10/src/main.rs) |
+| 10  | 2    | [Rust](day10/src/main.rs) |
