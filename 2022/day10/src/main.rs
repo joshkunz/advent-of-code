@@ -9,14 +9,24 @@ fn main() {
     io::stdin().read_to_string(&mut input).unwrap();
 
     println!("Solution 1: {}", part1(&input).expect("part 1"));
+    println!("Solution 2:");
+    part2(&input).expect("part 2");
 }
 
 fn part1(input: &str) -> Result<i64> {
     let insts = parse(input)?;
     let mut c = Puter::new();
-    let out = c.simulate(&insts);
+    let out = c.sample(&insts);
     //println!("{:#?}", out);
     return Ok(out.iter().map(|s| s.value).sum());
+}
+
+fn part2(input: &str) -> Result<()> {
+    let insts = parse(input)?;
+    let mut c = Puter::new();
+    c.display(&insts);
+    //println!("{:#?}", out);
+    return Ok(());
 }
 
 #[derive(Debug,PartialEq)]
@@ -51,6 +61,7 @@ struct Puter {
     pc: usize,
     x: i64,
     cycle: usize,
+    scan: usize,
 }
 
 #[derive(Debug,PartialEq)]
@@ -66,25 +77,17 @@ impl Puter {
             pc: 0,
             x: 1,
             cycle: 1,
+            scan: 0,
         };
     }
 
-    fn simulate(&mut self, insts: &Vec<Inst>) -> Vec<Sample> {
-        let mut out: Vec<Sample> = Vec::new();
-
+    fn run<F>(&mut self, insts: &Vec<Inst>, mut f: F)
+    where
+        F: FnMut(&mut Self),
+    {
         let mut ctr: usize = 0;
-        let mut sample_wait: usize = 20;
         while self.pc < insts.len() {
-            sample_wait -= 1;
-            if sample_wait == 0 {
-                let s = Sample{
-                    cycle: self.cycle,
-                    x: self.x,
-                    value: (self.cycle as i64) * self.x
-                };
-                out.push(s);
-                sample_wait = 40;
-            }
+            f(self);
 
             let inst = &insts[self.pc];
             self.cycle += 1;
@@ -102,12 +105,54 @@ impl Puter {
                     ctr = 0;
                 }
                 // Nothing to do. Don't increment pc, and don't change X.
-                Inst::AddX(..) => (), 
+                Inst::AddX(..) => (),
             }
         }
+    }
+
+    fn sample(&mut self, insts: &Vec<Inst>) -> Vec<Sample> {
+        let mut out: Vec<Sample> = Vec::new();
+        let mut sample_wait: usize = 20;
+
+        self.run(insts, |p| {
+            sample_wait -= 1;
+            if sample_wait == 0 {
+                let s = Sample{
+                    cycle: p.cycle,
+                    x: p.x,
+                    value: (p.cycle as i64) * p.x
+                };
+                out.push(s);
+                sample_wait = 40;
+            }
+        });
+
         return out;
     }
 
+    fn is_lit(&self) -> bool {
+        if self.x < 0 {
+            return false;
+        }
+        let loc = self.scan % 40;
+        return loc+1 == (self.x as usize)
+            || loc == (self.x as usize)
+            || loc == (self.x as usize)+1;
+    }
+
+    fn display(&mut self, insts: &Vec<Inst>)  {
+        self.run(insts, |p| {
+            if p.scan != 0 && p.scan % 40 == 0 {
+                println!();
+            }
+            if p.is_lit() {
+                print!("#");
+            } else {
+                print!(".");
+            }
+            p.scan += 1;
+        })
+    }
 }
 
 #[cfg(test)]
